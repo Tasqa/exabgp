@@ -23,6 +23,7 @@ class _AFI (int):
 	IPv6      = 0x02
 	L2VPN     = 0x19
 	BGPLS     = 0x4004
+	ILA       = 0x1337
 
 	_names = {
 		UNDEFINED: 'undefined',
@@ -30,6 +31,7 @@ class _AFI (int):
 		IPv6:      'ipv6',
 		L2VPN:     'l2vpn',
 		BGPLS:     'bgpls',
+		ILA:        'ila',
 	}
 
 	_masks = {
@@ -59,6 +61,7 @@ class AFI (Resource):
 	ipv6      = _AFI(_AFI.IPv6)
 	l2vpn     = _AFI(_AFI.L2VPN)
 	bgpls     = _AFI(_AFI.BGPLS)
+	ila       = _AFI(_AFI.ILA)
 
 	common = {
 		undefined.pack(): undefined,
@@ -66,6 +69,7 @@ class AFI (Resource):
 		ipv6.pack():      ipv6,
 		l2vpn.pack():     l2vpn,
 		bgpls.pack():     bgpls,
+		ila.pack():       ila,
 	}
 
 	codes = dict ((k.lower().replace('_','-'),v) for (k,v) in {
@@ -73,6 +77,7 @@ class AFI (Resource):
 		'ipv6':  ipv6,
 		'l2vpn': l2vpn,
 		'bgpls': bgpls,
+		'ila':   ila,
 	}.items())
 
 	cache = dict([(r,r) for (l,r) in codes.items()])
@@ -101,6 +106,8 @@ class AFI (Resource):
 			return ['vpls','evpn']
 		if afi == 'bgpls':
 			return ['bgp-ls','bgp-ls-vpn']
+		if afi == 'ila':
+			return ['unicast', 'multicast']
 		return []
 
 	@classmethod
@@ -120,6 +127,7 @@ class _SAFI (int):
 	UNICAST    = 1              # [RFC4760]
 	MULTICAST  = 2              # [RFC4760]
 	NLRI_MPLS  = 4              # [RFC3107]
+	VPN_ILA	   = 13		    # [draft-lapukhov-bgp-ila-afi-02]
 	VPLS       = 65             # [RFC4761]
 	EVPN       = 70             # [draft-ietf-l2vpn-evpn]
 	BGPLS      = 71             # [RFC7752]
@@ -144,10 +152,12 @@ class _SAFI (int):
 	# unassigned = [_ for _ in range(8,64)] + [_ for _ in range(70,128)]
 	# reverved = [0,3] + [130,131] + [_ for _ in range(135,140)] + [_ for _ in range(141,241)] + [255,]    # [RFC4760]
 
+
 	_names = {
 		UNICAST:   'unicast',
 		MULTICAST: 'multicast',
 		NLRI_MPLS: 'nlri-mpls',
+		VPN_ILA:   'vpn-ila',
 		VPLS:      'vpls',
 		EVPN:      'evpn',
 		BGPLS:     'bgp-ls',
@@ -182,6 +192,7 @@ class SAFI (Resource):
 	unicast    = _SAFI(_SAFI.UNICAST)
 	multicast  = _SAFI(_SAFI.MULTICAST)
 	nlri_mpls  = _SAFI(_SAFI.NLRI_MPLS)
+	vpn_ila	   = _SAFI(_SAFI.VPN_ILA)
 	vpls       = _SAFI(_SAFI.VPLS)
 	evpn       = _SAFI(_SAFI.EVPN)
 	bgp_ls     = _SAFI(_SAFI.BGPLS)
@@ -196,6 +207,7 @@ class SAFI (Resource):
 		unicast.pack():    unicast,
 		multicast.pack():  multicast,
 		nlri_mpls.pack():  nlri_mpls,
+		vpn_ila.pack():	   vpn_ila,
 		vpls.pack():       vpls,
 		evpn.pack():       evpn,
 		bgp_ls.pack():     bgp_ls,
@@ -210,6 +222,7 @@ class SAFI (Resource):
 		'unicast':   unicast,
 		'multicast': multicast,
 		'nlri-mpls': nlri_mpls,
+		'vpn-ila':   vpn_ila,
 		'vpls':      vpls,
 		'evpn':      evpn,
 		'bgp-ls':    bgp_ls,

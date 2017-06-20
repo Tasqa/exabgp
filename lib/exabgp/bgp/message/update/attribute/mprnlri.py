@@ -159,6 +159,9 @@ class MPRNLRI (Attribute,Family):
 		elif afi == AFI.bgpls:
 			if len_nh != 4:
 				Notify(3,0,'invalid bgpls next-hop length %d expected 4' % len_nh)
+		elif afi == AFI.ila:
+			if len_nh != 8:
+				Notify(3,0,'invalid ila next-hop length %d expected 8' % len_nh)
 		size = len_nh - rd
 
 		# XXX: FIXME: GET IT FROM CACHE HERE ?
@@ -186,9 +189,10 @@ class MPRNLRI (Attribute,Family):
 
 		if not data:
 			raise Notify(3,0,'No data to decode in an MPREACHNLRI but it is not an EOR %d/%d' % (afi,safi))
-
+			# at this point  nexthops = [ locator_value ]
 		while data:
 			if nexthops:
+				# this happens exactly once
 				for nexthop in nexthops:
 					nlri,left = NLRI.unpack_nlri(afi,safi,data,IN.ANNOUNCED,addpath)
 					nlri.nexthop = NextHop.unpack(nexthop)
