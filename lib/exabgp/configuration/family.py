@@ -29,6 +29,8 @@ class ParseFamily (Section):
 		'   ipv6 flow-vpn;\n' \
 		'   l2vpn vpls;\n' \
 		'   l2vpn evpn;\n' \
+		'   ila unicast;\n' \
+		'   ila multicast;\n' \
 		'}'
 
 	convert = {
@@ -55,6 +57,10 @@ class ParseFamily (Section):
 			'bgp-ls':		(AFI.bgpls,SAFI.bgp_ls),
 			'bgp-ls-vpn':	(AFI.bgpls,SAFI.bgp_ls_vpn),
 		},
+		'ila': {
+			'unicast':	(AFI.ila,SAFI.unicast),
+			'multicast':	(AFI.ila,SAFI.multicast)
+		},
 	}
 
 	action = {
@@ -62,6 +68,7 @@ class ParseFamily (Section):
 		'ipv6':  'append-command',
 		'l2vpn': 'append-command',
 		'bgpls': 'append-command',
+		'ila':   'append-command',
 	}
 
 	name = 'family'
@@ -73,6 +80,7 @@ class ParseFamily (Section):
 			'ipv6':  self.ipv6,
 			'l2vpn': self.l2vpn,
 			'bgpls': self.bgpls,
+			'ila':   self.ila,
 		}
 		self._all = ''
 		self._seen = []
@@ -114,6 +122,9 @@ class ParseFamily (Section):
 
 	def bgpls (self, tokeniser):
 		return self._family(tokeniser, 'bgpls')
+
+	def ila (self, tokeniser):
+		return self._family(tokeniser, 'ila')
 
 	def minimal (self, tokeniser):
 		raise ValueError('family minimal is deprecated')
